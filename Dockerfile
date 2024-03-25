@@ -1,5 +1,5 @@
 
-FROM openjdk:17-jdk-alpine
-MAINTAINER baeldung.com
-COPY target/DigitalBlog-1.0-SNAPSHOT.jar digitalblog.jar
-ENTRYPOINT ["java","-jar","/digitalblog.jar"]
+FROM eclipse-temurin:17-jdk-alpine
+VOLUME /tmp
+COPY target/*.jar app.jar
+ENTRYPOINT ["java","-jar","/app.jar"]
