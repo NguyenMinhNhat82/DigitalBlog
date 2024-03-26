@@ -2,6 +2,7 @@ package com.nmn.service;
 
 import com.nmn.dto.ArticleDTO;
 import com.nmn.model.Articles;
+import com.nmn.model.Users;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Objects;
 public interface ArticleService {
     public List<Articles> getListArticle(Map<String, String> params);
 
-    public Articles saveArticle(ArticleDTO articleDTO);
+    public Articles saveArticle(ArticleDTO articleDTO, Users users);
 
-    public Boolean deleteArticles(Integer id);
+    public void deleteArticles(Integer id);
 }

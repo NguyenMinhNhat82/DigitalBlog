@@ -1,5 +1,6 @@
 package com.nmn.service.impl;
 
+import com.nmn.dto.ChangePasswordDTO;
 import com.nmn.dto.UserDTO;
 import com.nmn.dto.mapper.UserMapper;
 import com.nmn.model.Users;
@@ -7,6 +8,7 @@ import com.nmn.repository.UserRepository;
 import com.nmn.repository.UserRepositoryCus;
 import com.nmn.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,14 +33,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean changePassword(Integer id, String password) {
+    public String changePassword(Integer id, ChangePasswordDTO changePasswordDTO) {
         try {
+            if(!changePasswordDTO.getConfirmPassword().equals(changePasswordDTO.getNewPassword()))
+                return "New Password and Confirm Password not match";
             Users user = userRepository.findUsersById(id);
-            user.setPassword(new BCryptPasswordEncoder().encode(password));
-            userRepository.save(user);
-            return true;
+            if(user == null)
+                throw new UsernameNotFoundException("not found user");
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            if(encoder.matches(changePasswordDTO.getCurrentPassword(),user.getPassword())) {
+                user.setPassword(new BCryptPasswordEncoder().encode(changePasswordDTO.getNewPassword()));
+                userRepository.save(user);
+                return "SUCCESS";
+            }
+            return "Wrong password";
         }catch (Exception exception){
-            return false;
+            return exception.getMessage();
         }
     }
 

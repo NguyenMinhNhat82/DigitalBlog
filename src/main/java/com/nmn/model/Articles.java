@@ -24,13 +24,13 @@ public class Articles {
     private  String content;
     private LocalDateTime createdDate;
     private  LocalDateTime updatedDate;
-    @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "created-by")
     private Users createdBy;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "articleId",fetch = FetchType.LAZY)
     @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "articleId",fetch = FetchType.LAZY)
     private Set<Comments> comments = new HashSet<>();
 
 }

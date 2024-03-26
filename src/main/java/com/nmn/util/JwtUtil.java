@@ -20,23 +20,12 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
-//
-//    @Autowired
-//    private SimpMessagingTemplate simpMessagingTemplate;
     public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
 
 
-    private int jwtExpirationInMs = 900000;
-    private int refreshExpirationDateInMs = 900000;
 
 
-    public String doGenerateRefreshToken(Map<String, Object> claims, String subject) {
 
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + refreshExpirationDateInMs))
-                .signWith(SignatureAlgorithm.HS512, SECRET).compact();
-
-    }
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -65,12 +54,7 @@ public class JwtUtil {
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
-        if(isTokenExpired(token)){
-            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            Calendar cal = Calendar.getInstance();
-        }
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-
     }
 
     public String generateToken(String userName){

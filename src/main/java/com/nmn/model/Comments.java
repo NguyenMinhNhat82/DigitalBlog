@@ -20,12 +20,12 @@ public class Comments {
     private  String content;
     private LocalDateTime createdDate;
     private  LocalDateTime updatedDate;
-    @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private Users userId;
 
-    @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "article_id")
     private Articles articleId;

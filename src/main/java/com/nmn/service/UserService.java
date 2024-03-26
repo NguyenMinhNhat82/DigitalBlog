@@ -1,5 +1,6 @@
 package com.nmn.service;
 
+import com.nmn.dto.ChangePasswordDTO;
 import com.nmn.dto.UserDTO;
 import com.nmn.model.Users;
 
@@ -13,7 +14,7 @@ public interface UserService {
 
     public Users readProfile(Integer id);
 
-    public Boolean changePassword(Integer id, String password);
+    public String changePassword(Integer id, ChangePasswordDTO changePasswordDTO);
 
     public Users addOrUpdateProfile(UserDTO userDTO);
     public Boolean deleteUser(Integer id);

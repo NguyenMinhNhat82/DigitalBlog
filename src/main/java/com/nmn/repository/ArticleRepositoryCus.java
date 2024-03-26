@@ -41,9 +41,14 @@ public class ArticleRepositoryCus {
         if (params != null) {
             String page = params.get("page");
             if (page != null) {
-                int pageSize = Integer.parseInt("2");
+                int pageSize = 5;
+                String pageSizeParam = params.get("pageSize");
+                    if(pageSizeParam != null && !pageSizeParam.isEmpty()){
+                         Integer.parseInt(pageSizeParam);
+                    }
                 query.setFirstResult((Integer.parseInt(page) - 1) * pageSize);
                 query.setMaxResults(pageSize);
+
             }
         }
         return query.getResultList();
