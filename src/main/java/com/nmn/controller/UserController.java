@@ -2,6 +2,7 @@ package com.nmn.controller;
 
 
 import com.nmn.dto.UserDTO;
+import com.nmn.dto.response.UserResponseDTO;
 import com.nmn.model.Users;
 import com.nmn.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.rmi.MarshalledObject;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +28,7 @@ public class UserController {
     @Operation(summary = "Save user", description = "Save user")
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/save")
-    ResponseEntity<Users> saveUser( @RequestBody UserDTO userDTO){
+    ResponseEntity<UserResponseDTO> saveUser( @RequestBody UserDTO userDTO){
         return new ResponseEntity<>(userService.addOrUpdateProfile(userDTO), HttpStatus.OK);
     }
 
@@ -40,8 +43,12 @@ public class UserController {
 
     @Operation(summary = "Get all list user", description = "Get all list user")
     @SecurityRequirement(name = "Bearer Authentication")
-    @GetMapping("/get-all")
-    ResponseEntity<List<Users>> getAllListUser(@RequestParam Map<String, String> params){
+    @GetMapping("/")
+    ResponseEntity<List<UserResponseDTO>> getAllListUser(@RequestParam(required = false, defaultValue = "") String username,
+                                                         @RequestParam(required = false,defaultValue = "1") String page){
+        Map<String, String> params  = new HashMap<>();
+        params.put("username",username);
+        params.put("page", page);
         return new ResponseEntity<>(userService.getListUser(params), HttpStatus.OK);
     }
 
@@ -65,17 +72,18 @@ public class UserController {
 
     @Operation(summary = "Give user permission to save article", description = "Give use permission to save article")
     @SecurityRequirement(name = "Bearer Authentication")
-    @PutMapping("/{id}/give-permission-to-save-article")
+    @PutMapping("/{id}/add-permission")
     ResponseEntity<String> givePermission(@PathVariable("id") Integer idUser){
         return new ResponseEntity<>(userService.givePermissionToSaveArticle(idUser), HttpStatus.OK);
     }
 
     @Operation(summary = "Denny user to save article", description = "Denny user to save article")
     @SecurityRequirement(name = "Bearer Authentication")
-    @PutMapping("/{id}/denny-permission-to-save-article")
+    @PutMapping("/{id}/remove-permission")
     ResponseEntity<String> dennyPermission(@PathVariable("id") Integer idUser){
         return new ResponseEntity<>(userService.dennyPermissionToSaveArticle(idUser), HttpStatus.OK);
     }
+
 
 
 }

@@ -25,13 +25,13 @@ public class ArticleRepositoryCus {
     public List<Articles>getListArticles(Map<String, String> params){
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Articles> q = cb.createQuery(Articles.class);
-        Root<Articles> userRoot = q.from(Articles.class);
+        Root<Articles> articlesRoot = q.from(Articles.class);
         if (params != null) {
             List<Predicate> predicates = new ArrayList<>();
 
-            String username = params.get("username");
-            if (username != null && !username.isEmpty()) {
-                predicates.add(cb.like(userRoot.get("username"), String.format("%%%s%%", username)));
+            String title = params.get("title");
+            if (title != null && !title.isEmpty()) {
+                predicates.add(cb.like(articlesRoot.get("title"), String.format("%%%s%%", title)));
             }
 
             q.where(predicates.toArray(Predicate[]::new));

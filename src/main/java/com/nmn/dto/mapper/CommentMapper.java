@@ -8,6 +8,9 @@ import com.nmn.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Component
 public class CommentMapper {
@@ -41,5 +44,11 @@ public class CommentMapper {
         comment.setArticleId(articleRepository.findArticlesById(commentDTO.getArticleID()));
         return comment;
 
+    }
+    public List<CommentDTO> toDTOList(List<Comments> list){
+        List<CommentDTO > list1 = new ArrayList<>();
+        for(Comments c : list)
+            list1.add(toDto(c));
+        return list1;
     }
 }

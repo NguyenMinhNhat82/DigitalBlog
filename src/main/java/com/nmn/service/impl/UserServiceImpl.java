@@ -3,7 +3,11 @@ package com.nmn.service.impl;
 import com.nmn.dto.ChangePasswordDTO;
 import com.nmn.dto.UserDTO;
 import com.nmn.dto.mapper.UserMapper;
+import com.nmn.dto.mapper.UserReponseMapper;
+import com.nmn.dto.response.UserResponseDTO;
+import com.nmn.model.Permission;
 import com.nmn.model.Users;
+import com.nmn.repository.PermissionRepository;
 import com.nmn.repository.UserRepository;
 import com.nmn.repository.UserRepositoryCus;
 import com.nmn.service.UserService;
@@ -26,6 +30,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepositoryCus userRepositoryCus;
+
+    @Autowired
+    private UserReponseMapper userReponseMapper;
+
+    @Autowired
+    private PermissionRepository  permissionRepository;
 
     @Override
     public Users readProfile(Integer id) {
@@ -53,8 +63,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Users addOrUpdateProfile(UserDTO userDTO) {
-        return userRepository.save(userMapper.toEntity(userDTO));
+    public UserResponseDTO addOrUpdateProfile(UserDTO userDTO) {
+        return userReponseMapper.userResponseDTO(userRepository.save(userMapper.toEntity(userDTO)));
     }
     @Override
     public Boolean deleteUser(Integer id) {
@@ -68,8 +78,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Users> getListUser(Map<String, String> params) {
-        return userRepositoryCus.getListUser(params);
+    public List<UserResponseDTO> getListUser(Map<String, String> params) {
+        return userReponseMapper.toListResponse(userRepositoryCus.getListUser(params));
     }
 
     @Override
@@ -109,9 +119,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public String givePermissionToSaveArticle(Integer id) {
         try{
+
             Users user = userRepository.findUsersById(id);
-            user.setCanSaveArticle(true);
-            userRepository.save(user);
+            Permission  permission = permissionRepository.getPermissionByUser(user);
+            if(permission!= null)
+                return "This user already has permission";
+            Permission p = new Permission();
+            p.setUser(user);
+            permissionRepository.save(p);
             return  "SUCCESS";
         }catch (Exception ex){
             return ex.getMessage();
@@ -122,8 +137,10 @@ public class UserServiceImpl implements UserService {
     public String dennyPermissionToSaveArticle(Integer id) {
         try{
             Users user = userRepository.findUsersById(id);
-            user.setCanSaveArticle(false);
-            userRepository.save(user);
+            Permission permission  = permissionRepository.getPermissionByUser(user);
+            if (permission == null)
+                return "This user does not have permissions";
+            permissionRepository.delete(permission);
             return  "SUCCESS";
         }catch (Exception ex){
             return ex.getMessage();

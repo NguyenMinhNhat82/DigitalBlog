@@ -8,6 +8,8 @@ import com.nmn.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CommentServiceImpl implements CommentService {
     @Autowired
@@ -16,9 +18,14 @@ public class CommentServiceImpl implements CommentService {
     CommentMapper commentMapper;
 
     @Override
-    public Comments saveCommentToArticle(CommentDTO comment) throws Exception {
+    public CommentDTO saveCommentToArticle(CommentDTO comment) throws Exception {
         if(comment.getUserID() ==0 ||comment.getUserID()== null)
             throw new Exception("User can not be null");
-        return commentRepository.save(commentMapper.toEntity(comment));
+        return commentMapper.toDto(commentRepository.save(commentMapper.toEntity(comment)));
+    }
+
+    @Override
+    public List<CommentDTO> getAllComment() {
+        return commentMapper.toDTOList(commentRepository.findAll());
     }
 }

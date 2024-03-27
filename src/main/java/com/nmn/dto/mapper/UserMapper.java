@@ -17,7 +17,6 @@ public class UserMapper {
         userDto.setPassword(user.getPassword());
         userDto.setUsername(user.getUsername());
         userDto.setIsActivate(user.getIsActivate());
-        userDto.setCanSaveArticle(user.getCanSaveArticle());
         return userDto;
     }
 
@@ -32,7 +31,6 @@ public class UserMapper {
         user.setPassword(new BCryptPasswordEncoder().encode(userDTO.getPassword()));
         user.setRole(Role.valueOf(userDTO.getRole()));
         user.setIsActivate(userDTO.getIsActivate());
-        user.setCanSaveArticle(userDTO.getCanSaveArticle());
         return user;
     }
 }

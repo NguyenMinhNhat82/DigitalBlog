@@ -11,9 +11,9 @@ import java.util.Objects;
 
 @Service
 public interface ArticleService {
-    public List<Articles> getListArticle(Map<String, String> params);
+    public List<ArticleDTO> getListArticle(Map<String, String> params);
 
-    public Articles saveArticle(ArticleDTO articleDTO, Users users);
+    public ArticleDTO saveArticle(ArticleDTO articleDTO, Users users);
 
     public void deleteArticles(Integer id);
 }

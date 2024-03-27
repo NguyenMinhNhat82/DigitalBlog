@@ -5,8 +5,10 @@ import com.nmn.model.Comments;
 import org.springframework.stereotype.Service;
 
 import javax.xml.stream.events.Comment;
+import java.util.List;
 
 @Service
 public interface CommentService {
-    public Comments saveCommentToArticle(CommentDTO comment) throws Exception;
+    public CommentDTO saveCommentToArticle(CommentDTO comment) throws Exception;
+    public List<CommentDTO> getAllComment();
 }

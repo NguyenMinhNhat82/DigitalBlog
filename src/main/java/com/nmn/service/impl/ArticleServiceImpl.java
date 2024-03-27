@@ -7,11 +7,13 @@ import com.nmn.model.Users;
 import com.nmn.model.enumType.Role;
 import com.nmn.repository.ArticleRepository;
 import com.nmn.repository.ArticleRepositoryCus;
+import com.nmn.repository.PermissionRepository;
 import com.nmn.service.ArticleService;
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.Permission;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,16 +30,20 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private ArticleRepositoryCus articleRepositoryCus;
+
+    @Autowired
+    private PermissionRepository permissionRepository;
     @Override
-    public List<Articles> getListArticle(Map<String, String> params) {
-        return  articleRepositoryCus.getListArticles(params);
+    public List<ArticleDTO> getListArticle(Map<String, String> params) {
+        return  articleMapper.toListArticleDTO(articleRepositoryCus.getListArticles(params));
     }
 
     @Override
-    public Articles saveArticle(ArticleDTO articleDTO, Users user) {
-        if((user.getCanSaveArticle() && user.getRole().equals(Role.CUSTOMER_USER)
+    public ArticleDTO saveArticle(ArticleDTO articleDTO, Users user) {
+
+        if((permissionRepository.getPermissionByUser(user) !=null && user.getRole().equals(Role.CUSTOMER_USER)
                 || user.getRole().equals(Role.SYS_ADMIN))) {
-            return articleRepository.save(articleMapper.toEntity(articleDTO));
+            return articleMapper.toDTO(articleRepository.save(articleMapper.toEntity(articleDTO)));
         }
         throw new RuntimeException("User dont have permission to save");
     }

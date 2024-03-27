@@ -18,6 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,15 +36,19 @@ public class NewsController {
     private CommentService commentService;
 
 
-    @GetMapping("/article/get-all")
-    ResponseEntity<List<Articles>> getListArticles(@RequestParam Map<String, String> params) {
+    @GetMapping("/article")
+    ResponseEntity<List<ArticleDTO>> getListArticles(@RequestParam(required = false,defaultValue = "1") String page,
+                                                     @RequestParam(required = false,defaultValue = "") String title) {
+        Map<String, String> params = new HashMap<>();
+        params.put("page",page);
+        params.put("title",title);
         return new ResponseEntity<>(articleService.getListArticle(params), HttpStatus.OK);
     }
 
     @Operation(summary = "Save article", description = "Save article")
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/article/save")
-    ResponseEntity<Articles> saveArticle(@RequestBody ArticleDTO articleDTO, Principal userAuth) {
+    ResponseEntity<ArticleDTO> saveArticle(@RequestBody ArticleDTO articleDTO, Principal userAuth) {
         Users user = userService.findUserByUserName(userAuth.getName());
         return new ResponseEntity<>(articleService.saveArticle(articleDTO, user), HttpStatus.OK);
     }
@@ -57,11 +62,16 @@ public class NewsController {
     }
 
     @PostMapping("/comment/save")
-    ResponseEntity<Comments> saveComment(@RequestBody CommentDTO commentDTO, Principal user) throws Exception {
+    ResponseEntity<CommentDTO> saveComment(@RequestBody CommentDTO commentDTO, Principal user) throws Exception {
         if (user != null) {
             Users checkUser = userService.findUserByUserName(user.getName());
             commentDTO.setUserID(checkUser.getId());
         }
         return new ResponseEntity<>(commentService.saveCommentToArticle(commentDTO), HttpStatus.OK);
+    }
+
+    @GetMapping("/comment")
+    ResponseEntity<List<CommentDTO>> getComment(){
+        return new ResponseEntity<>(commentService.getAllComment(),HttpStatus.OK );
     }
 }

@@ -7,6 +7,10 @@ import com.nmn.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListResourceBundle;
+
 @Component
 public class ArticleMapper {
 
@@ -39,4 +43,13 @@ public class ArticleMapper {
         articles.setCreatedBy(userRepository.findUsersById(articleDTO.getUserId()));
         return articles;
     }
+    public List<ArticleDTO> toListArticleDTO(List<Articles> list){
+        List<ArticleDTO> list1 = new ArrayList<>();
+        for(Articles a: list){
+            list1.add(toDTO(a));
+        }
+        return list1;
+    }
+
+
 }

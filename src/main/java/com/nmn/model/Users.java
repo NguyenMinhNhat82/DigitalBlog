@@ -28,7 +28,6 @@ public class Users {
 
     private Role role;
 
-    private Boolean canSaveArticle;
 
     private Boolean isActivate;
 
@@ -39,15 +38,17 @@ public class Users {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId",fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Comments> comments = new HashSet<>();
-
-    public Users(Integer id, String username, String password, Role role, Boolean canSaveArticle, Boolean isActivate) {
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    private Permission permission;
+    public Users(Integer id, String username, String password, Role role, Boolean isActivate) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
-        this.canSaveArticle = canSaveArticle;
         this.isActivate = isActivate;
     }
+
 
     public Users() {
     }

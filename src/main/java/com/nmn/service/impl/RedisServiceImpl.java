@@ -16,12 +16,12 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public void deleteToken(int idUser) {
-        tokenRepository.deleteToken(idUser);
+    public void deleteToken(String token) {
+        tokenRepository.deleteToken(token);
     }
 
     @Override
-    public String findTokenByUser(int user) {
-        return tokenRepository.getTokenByIdUser(user);
+    public Integer findTokenByUser(String token) {
+        return tokenRepository.getTokenByIdUser(token);
     }
 }
