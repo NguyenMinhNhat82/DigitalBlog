@@ -16,7 +16,9 @@ public class CommentServiceImpl implements CommentService {
     CommentMapper commentMapper;
 
     @Override
-    public Comments saveCommentToArticle(CommentDTO comment) {
+    public Comments saveCommentToArticle(CommentDTO comment) throws Exception {
+        if(comment.getUserID() ==0 ||comment.getUserID()== null)
+            throw new Exception("User can not be null");
         return commentRepository.save(commentMapper.toEntity(comment));
     }
 }

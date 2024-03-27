@@ -3,6 +3,7 @@ package com.nmn.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nmn.model.enumType.Role;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ import java.util.Set;
 @Table(name = "users")
 @Getter
 @Setter
+@Data
 public class Users {
 
     @Id
@@ -38,5 +40,15 @@ public class Users {
     @JsonIgnore
     private Set<Comments> comments = new HashSet<>();
 
+    public Users(Integer id, String username, String password, Role role, Boolean canSaveArticle, Boolean isActivate) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.canSaveArticle = canSaveArticle;
+        this.isActivate = isActivate;
+    }
 
+    public Users() {
+    }
 }

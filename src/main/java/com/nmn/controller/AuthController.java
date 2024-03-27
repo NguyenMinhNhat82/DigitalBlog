@@ -56,6 +56,9 @@ public class AuthController {
     @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping("/{id}/change-password")
     ResponseEntity<String> changePassword(@RequestBody ChangePasswordDTO request, @PathVariable("id") Integer id){
+        String response = userService.changePassword(id,request);
+        if (response.equals("SUCCESS"))
+            return new ResponseEntity<>(userService.changePassword(id,request), HttpStatus.OK);
         return new ResponseEntity<>(userService.changePassword(id,request), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -71,6 +74,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationDTO authenticationDTO, HttpServletResponse response) throws BadCredentialsException, DisabledException, UsernameNotFoundException, IOException {
         String jwt = authService.login(authenticationDTO,response);
+
         return new ResponseEntity<>(new AuthenticationResponse(jwt), HttpStatus.OK);
 
     }

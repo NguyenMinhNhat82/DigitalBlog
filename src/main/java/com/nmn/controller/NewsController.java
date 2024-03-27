@@ -57,7 +57,7 @@ public class NewsController {
     }
 
     @PostMapping("/comment/save")
-    ResponseEntity<Comments> saveComment(@RequestBody CommentDTO commentDTO, Principal user) {
+    ResponseEntity<Comments> saveComment(@RequestBody CommentDTO commentDTO, Principal user) throws Exception {
         if (user != null) {
             Users checkUser = userService.findUserByUserName(user.getName());
             commentDTO.setUserID(checkUser.getId());

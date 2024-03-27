@@ -77,6 +77,7 @@ public class UserServiceImpl implements UserService {
         try {
             Users user = userRepository.findUsersById(id);
             user.setIsActivate(true);
+            userRepository.save(user);
             return true;
         }catch (Exception exception){
             return false;
@@ -88,6 +89,7 @@ public class UserServiceImpl implements UserService {
         try {
             Users user = userRepository.findUsersById(id);
             user.setIsActivate(false);
+            userRepository.save(user);
             return true;
         }catch (Exception exception){
             return false;

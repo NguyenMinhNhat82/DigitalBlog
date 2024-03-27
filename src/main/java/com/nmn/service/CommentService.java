@@ -8,5 +8,5 @@ import javax.xml.stream.events.Comment;
 
 @Service
 public interface CommentService {
-    public Comments saveCommentToArticle(CommentDTO comment);
+    public Comments saveCommentToArticle(CommentDTO comment) throws Exception;
 }
