@@ -30,8 +30,8 @@ public class WebSecurityConfiguration  {
         return http.csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/auth/login",
-                        "/swagger-ui/**", "/v3/api-docs/**","/api/v1/news/article/get-all"
-                ,"/api/v1/news/comment/save","/api/v1/news/comment"
+                        "/swagger-ui/**", "/v3/api-docs/**","/api/v1/news/article"
+                ,"/api/v1/news/comment/save","/api/v1/news/article/{id}/comments"
                 ).permitAll()
                 .and()
                 .authorizeHttpRequests().requestMatchers("/api/v1/auth/**","/logout-token","/current-user","/api/v1/auth/logout")

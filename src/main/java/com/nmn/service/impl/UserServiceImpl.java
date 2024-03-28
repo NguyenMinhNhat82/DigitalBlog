@@ -7,10 +7,12 @@ import com.nmn.dto.mapper.UserReponseMapper;
 import com.nmn.dto.response.UserResponseDTO;
 import com.nmn.model.Permission;
 import com.nmn.model.Users;
+import com.nmn.model.enumType.Role;
 import com.nmn.repository.PermissionRepository;
 import com.nmn.repository.UserRepository;
 import com.nmn.repository.UserRepositoryCus;
 import com.nmn.service.UserService;
+import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -64,6 +66,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDTO addOrUpdateProfile(UserDTO userDTO) {
+        if(!EnumUtils.isValidEnum(Role.class,userDTO.getRole()) && (userDTO.getId() == 0 || userDTO.getId() == null))
+            userDTO.setRole("CUSTOMER_USER");
         return userReponseMapper.userResponseDTO(userRepository.save(userMapper.toEntity(userDTO)));
     }
     @Override

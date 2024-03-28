@@ -17,6 +17,12 @@ public class UserMapper {
         userDto.setPassword(user.getPassword());
         userDto.setUsername(user.getUsername());
         userDto.setIsActivate(user.getIsActivate());
+
+        userDto.setDob(user.getDob());
+        userDto.setEmail(user.getEmail());
+        userDto.setPhone(user.getPhone());
+        userDto.setFirstName(user.getFirstName());
+        userDto.setLastName(user.getLastName());
         return userDto;
     }
 
@@ -24,13 +30,22 @@ public class UserMapper {
         Users user = new Users();
         if(userDTO.getId() == null){
             user.setId(0);
+            user.setPassword(new BCryptPasswordEncoder().encode(userDTO.getPassword()));
         }
-        else
+        else {
             user.setId(userDTO.getId());
+        }
+        user.setPassword(userDTO.getPassword());
         user.setUsername(userDTO.getUsername());
-        user.setPassword(new BCryptPasswordEncoder().encode(userDTO.getPassword()));
         user.setRole(Role.valueOf(userDTO.getRole()));
         user.setIsActivate(userDTO.getIsActivate());
+
+
+        user.setDob(userDTO.getDob());
+        user.setEmail(userDTO.getEmail());
+        user.setPhone(userDTO.getPhone());
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
         return user;
     }
 }

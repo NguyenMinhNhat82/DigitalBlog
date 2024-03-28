@@ -49,30 +49,50 @@ public class NewsController {
     @Operation(summary = "Save article", description = "Save article")
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/article/save")
-    ResponseEntity<ArticleDTO> saveArticle(@RequestBody ArticleRequestDTO articleDTO, Principal userAuth) {
-        Users user = userService.findUserByUserName(userAuth.getName());
-        return new ResponseEntity<>(articleService.saveArticle(articleDTO, user), HttpStatus.OK);
+    ResponseEntity<?> saveArticle(@RequestBody ArticleRequestDTO articleDTO, Principal userAuth) {
+        try {
+            Users user = userService.findUserByUserName(userAuth.getName());
+            return new ResponseEntity<>(articleService.saveArticle(articleDTO, user), HttpStatus.OK);
+        }
+        catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @Operation(summary = "Delete article", description = "Delete article")
     @SecurityRequirement(name = "Bearer Authentication")
     @DeleteMapping("/article/{id}/delete")
-    ResponseEntity<Void> deleteArticle(@PathVariable("id") Integer idArticle) {
-        articleService.deleteArticles(idArticle);
-        return ResponseEntity.noContent().build();
+    ResponseEntity<String> deleteArticle(@PathVariable("id") Integer idArticle) {
+        try {
+            articleService.deleteArticles(idArticle);
+            return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
+        }catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/comment/save")
-    ResponseEntity<CommentDTO> saveComment(@RequestBody CommentDTO commentDTO, Principal user) throws Exception {
-        if (user != null) {
-            Users checkUser = userService.findUserByUserName(user.getName());
-            commentDTO.setUserID(checkUser.getId());
+    ResponseEntity<?> saveComment(@RequestBody CommentDTO commentDTO, Principal user) throws Exception {
+        try {
+            if (user != null) {
+                Users checkUser = userService.findUserByUserName(user.getName());
+                commentDTO.setUserID(checkUser.getId());
+            }
+            return new ResponseEntity<>(commentService.saveCommentToArticle(commentDTO), HttpStatus.OK);
         }
-        return new ResponseEntity<>(commentService.saveCommentToArticle(commentDTO), HttpStatus.OK);
+        catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @GetMapping("/comment")
-    ResponseEntity<List<CommentDTO>> getComment(){
-        return new ResponseEntity<>(commentService.getAllComment(),HttpStatus.OK );
+    @GetMapping("/article/{id}/comments")
+    ResponseEntity<?> getComment(@PathVariable("id") Integer idArticle) throws Exception {
+        try {
+            return new ResponseEntity<>(commentService.getAllComment(idArticle),HttpStatus.OK );
+        }catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR );
+        }
+
     }
 }

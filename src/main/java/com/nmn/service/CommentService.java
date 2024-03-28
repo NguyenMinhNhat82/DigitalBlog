@@ -10,5 +10,5 @@ import java.util.List;
 @Service
 public interface CommentService {
     public CommentDTO saveCommentToArticle(CommentDTO comment) throws Exception;
-    public List<CommentDTO> getAllComment();
+    public List<CommentDTO> getAllComment(Integer idArticle) throws Exception;
 }

@@ -16,5 +16,5 @@ public interface ArticleService {
 
     public ArticleDTO saveArticle(ArticleRequestDTO articleReArticleDTO, Users users);
 
-    public void deleteArticles(Integer id);
+    public void deleteArticles(Integer id) throws Exception;
 }

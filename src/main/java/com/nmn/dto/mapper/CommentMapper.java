@@ -23,10 +23,10 @@ public class CommentMapper {
     public CommentDTO toDto(Comments comments){
         CommentDTO commentDTO = new CommentDTO();
         commentDTO.setId(comments.getId());
-        commentDTO.setContent(commentDTO.getContent());
+        commentDTO.setContent(comments.getContent());
         commentDTO.setCreatedDate(comments.getCreatedDate());
-        commentDTO.setUpdatedDate(commentDTO.getUpdatedDate());
-        commentDTO.setUserID(comments.getUserId().getId());
+        commentDTO.setUpdatedDate(comments.getUpdatedDate());
+        commentDTO.setUserID(comments.getUserId()==null?0:comments.getUserId().getId());
         commentDTO.setArticleID(comments.getArticleId().getId());
         return commentDTO;
     }

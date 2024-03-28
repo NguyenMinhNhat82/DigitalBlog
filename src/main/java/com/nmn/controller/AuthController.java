@@ -2,7 +2,10 @@ package com.nmn.controller;
 
 import com.nmn.dto.AuthenticationDTO;
 import com.nmn.dto.ChangePasswordDTO;
+import com.nmn.dto.UpdateUserDTO;
 import com.nmn.dto.UserDTO;
+import com.nmn.dto.mapper.UpdateUserMapper;
+import com.nmn.dto.mapper.UserMapper;
 import com.nmn.dto.mapper.UserReponseMapper;
 import com.nmn.dto.response.AuthenticationResponse;
 import com.nmn.dto.response.UserResponseDTO;
@@ -24,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +41,11 @@ public class AuthController {
     @Autowired
     UserService  userService;
 
+    @Autowired
+    UpdateUserMapper updateUserMapper;
+
+    @Autowired
+    UserMapper  userMapper;
 
     @Autowired
     private RedisService redisService;
@@ -51,10 +60,19 @@ public class AuthController {
     @Operation(summary = "Update profile", description = "Update profile")
     @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping("/update-profile")
-    ResponseEntity<UserResponseDTO> updateProfile(Principal user, @RequestBody UserDTO userDTO){
-        Users userBeforeUpdate = userService.findUserByUserName(user.getName());
-        userDTO.setId(userBeforeUpdate.getId());
-        return new ResponseEntity<>(userService.addOrUpdateProfile(userDTO), HttpStatus.OK);
+    ResponseEntity<?> updateProfile(Principal user, @RequestBody UpdateUserDTO userDTO){
+        try {
+            Users userBeforeUpdate = userService.findUserByUserName(user.getName());
+            Users userUpdate = updateUserMapper.toEntity(userDTO);
+            userUpdate.setId(userBeforeUpdate.getId());
+            userUpdate.setPassword(userBeforeUpdate.getPassword());
+            userUpdate.setRole(userBeforeUpdate.getRole());
+            userUpdate.setIsActivate(userBeforeUpdate.getIsActivate());
+            return new ResponseEntity<>(userService.addOrUpdateProfile(userMapper.toDTO(userUpdate)), HttpStatus.OK);
+        }
+        catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Operation(summary = "Change password", description = "Change password")
@@ -70,42 +88,57 @@ public class AuthController {
     @GetMapping("/read-profile")
     @Operation(summary = "Read profile", description = "Read profile")
     @SecurityRequirement(name = "Bearer Authentication")
-    ResponseEntity<UserResponseDTO> getUser(Principal userAuth){
-        Users user = userService.findUserByUserName(userAuth.getName());
-        return  new ResponseEntity<>(userReponseMapper.userResponseDTO(user),HttpStatus.OK);
+    ResponseEntity<?> getUser(Principal userAuth){
+        try {
+            Users user = userService.findUserByUserName(userAuth.getName());
+            return new ResponseEntity<>(userReponseMapper.userResponseDTO(user), HttpStatus.OK);
+        }catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> createAuthenticationToken(@RequestBody AuthenticationDTO authenticationDTO, HttpServletResponse response) throws BadCredentialsException, DisabledException, UsernameNotFoundException, IOException {
-        String jwt = authService.login(authenticationDTO,response);
-
-        return new ResponseEntity<>(new AuthenticationResponse(jwt), HttpStatus.OK);
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody AuthenticationDTO authenticationDTO, HttpServletResponse response) throws BadCredentialsException, DisabledException, UsernameNotFoundException, IOException {
+        try {
+            String jwt = authService.login(authenticationDTO, response);
+            return new ResponseEntity<>(new AuthenticationResponse(jwt), HttpStatus.OK);
+        }catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
     }
 
     @Operation(summary = "logout", description = "Log out")
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/logout")
-    public AuthenticationResponse logout(HttpServletRequest request){
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION).substring(7);
-        if(token!= null){
-            redisService.deleteToken(token);
-            return new AuthenticationResponse("Logged out");
+    public ResponseEntity<?> logout(HttpServletRequest request){
+        try {
+            String token = request.getHeader(HttpHeaders.AUTHORIZATION).substring(7);
+            if (token != null) {
+                redisService.deleteToken(token);
+                return new ResponseEntity<>(new AuthenticationResponse("Logged out"), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(new AuthenticationResponse("Log out fail"), HttpStatus.OK);
+        }catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.OK);
         }
-        return new AuthenticationResponse("Log out fail");
     }
 
     @Operation(summary = "refesh token", description = "Refresh JWT")
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping("/refreshToken")
-    public ResponseEntity<AuthenticationResponse> refreshToken(
+    public ResponseEntity<?> refreshToken(
             HttpServletRequest httpServletRequest
     ) throws IOException {
-        String newToken = authService.refeshToken(httpServletRequest);
-        return new ResponseEntity<>(
-                new AuthenticationResponse(newToken),
-                HttpStatus.OK
-        );
+        try {
+            String newToken = authService.refeshToken(httpServletRequest);
+            return new ResponseEntity<>(
+                    new AuthenticationResponse(newToken),
+                    HttpStatus.OK
+            );
+        }catch (Exception exception){
+            return  new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

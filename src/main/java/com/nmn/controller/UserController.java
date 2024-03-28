@@ -28,17 +28,26 @@ public class UserController {
     @Operation(summary = "Save user", description = "Save user")
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/save")
-    ResponseEntity<UserResponseDTO> saveUser( @RequestBody UserDTO userDTO){
-        return new ResponseEntity<>(userService.addOrUpdateProfile(userDTO), HttpStatus.OK);
+    ResponseEntity<?> saveUser( @RequestBody UserDTO userDTO){
+        try {
+            return new ResponseEntity<>(userService.addOrUpdateProfile(userDTO), HttpStatus.OK);
+        }catch (Exception exception){
+            return  new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @Operation(summary = "Delete user", description = "Delete user")
     @SecurityRequirement(name = "Bearer Authentication")
     @DeleteMapping("/{id}/delete")
     ResponseEntity<String> deleteUser(@PathVariable("id") Integer id){
-        if (userService.deleteUser(id))
-            return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
-        return new ResponseEntity<>("FAIL", HttpStatus.INTERNAL_SERVER_ERROR);
+        try {
+            if (userService.deleteUser(id))
+                return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
+            return new ResponseEntity<>("FAIL", HttpStatus.INTERNAL_SERVER_ERROR);
+        }catch (Exception exception){
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Operation(summary = "Get all list user", description = "Get all list user")
@@ -56,32 +65,48 @@ public class UserController {
     @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping("/{id}/activate")
     ResponseEntity<String> activateUser(@PathVariable("id") Integer idUser){
-        if (userService.activateUser(idUser))
-            return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
-        return new ResponseEntity<>("FAIL", HttpStatus.INTERNAL_SERVER_ERROR);
+        try {
+            if (userService.activateUser(idUser))
+                return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
+            return new ResponseEntity<>("FAIL", HttpStatus.INTERNAL_SERVER_ERROR);
+        }catch (Exception ex){
+            return  new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Operation(summary = "Deactivate user", description = "Deactivate user")
     @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping("/{id}/deactivate")
     ResponseEntity<String> deactivateUser(@PathVariable("id") Integer idUser){
+        try {
         if (userService.deActivateUser(idUser))
             return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
         return new ResponseEntity<>("FAIL", HttpStatus.INTERNAL_SERVER_ERROR);
+        }catch (Exception ex){
+            return  new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Operation(summary = "Give user permission to save article", description = "Give use permission to save article")
     @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping("/{id}/add-permission")
     ResponseEntity<String> givePermission(@PathVariable("id") Integer idUser){
+        try {
         return new ResponseEntity<>(userService.givePermissionToSaveArticle(idUser), HttpStatus.OK);
+        }catch (Exception ex){
+            return  new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Operation(summary = "Denny user to save article", description = "Denny user to save article")
     @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping("/{id}/remove-permission")
     ResponseEntity<String> dennyPermission(@PathVariable("id") Integer idUser){
+        try {
         return new ResponseEntity<>(userService.dennyPermissionToSaveArticle(idUser), HttpStatus.OK);
+        }catch (Exception ex){
+            return  new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 

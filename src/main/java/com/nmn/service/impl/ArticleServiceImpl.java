@@ -57,15 +57,11 @@ public class ArticleServiceImpl implements ArticleService {
 
 
     @Override
-    public void deleteArticles(Integer id) {
-        try {
+    public void deleteArticles(Integer id) throws Exception {
             Articles articles = articleRepository.findArticlesById(id);
             if(articles == null)
                 throw new Exception("Not found articles");
             articleRepository.delete(articles);
-        }
-        catch (Exception ex){
-            ex.printStackTrace();
-        }
+
     }
 }

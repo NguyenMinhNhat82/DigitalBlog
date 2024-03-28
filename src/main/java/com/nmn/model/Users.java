@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,6 +31,11 @@ public class Users {
 
 
     private Boolean isActivate;
+    private  String email;
+    private String phone;
+    private String firstName;
+    private String lastName;
+    private Date dob;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdBy",fetch = FetchType.LAZY)
     @JsonIgnore
@@ -41,6 +47,7 @@ public class Users {
     @OneToOne(mappedBy = "user")
     @JsonIgnore
     private Permission permission;
+
     public Users(Integer id, String username, String password, Role role, Boolean isActivate) {
         this.id = id;
         this.username = username;

@@ -16,6 +16,13 @@ public class UserReponseMapper {
         userResponseDTO.setId(users.getId());
         userResponseDTO.setUsername(users.getUsername());
         userResponseDTO.setIsActivate(users.getIsActivate());
+
+        userResponseDTO.setDob(users.getDob());
+        userResponseDTO.setEmail(users.getEmail());
+        userResponseDTO.setPhone(users.getPhone());
+        userResponseDTO.setFirstName(users.getFirstName());
+        userResponseDTO.setLastName(users.getLastName());
+
         return userResponseDTO;
     }
 
