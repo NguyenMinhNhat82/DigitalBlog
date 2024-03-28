@@ -1,7 +1,9 @@
 package com.nmn.service.impl;
 
 import com.nmn.dto.ArticleDTO;
+import com.nmn.dto.ArticleRequestDTO;
 import com.nmn.dto.mapper.ArticleMapper;
+import com.nmn.dto.mapper.ArticleRequestMapper;
 import com.nmn.model.Articles;
 import com.nmn.model.Users;
 import com.nmn.model.enumType.Role;
@@ -33,20 +35,26 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private PermissionRepository permissionRepository;
+
+    @Autowired
+    private ArticleRequestMapper articleRequestMapper;
     @Override
     public List<ArticleDTO> getListArticle(Map<String, String> params) {
         return  articleMapper.toListArticleDTO(articleRepositoryCus.getListArticles(params));
     }
 
-    @Override
-    public ArticleDTO saveArticle(ArticleDTO articleDTO, Users user) {
 
-        if((permissionRepository.getPermissionByUser(user) !=null && user.getRole().equals(Role.CUSTOMER_USER)
-                || user.getRole().equals(Role.SYS_ADMIN))) {
-            return articleMapper.toDTO(articleRepository.save(articleMapper.toEntity(articleDTO)));
+    @Override
+    public ArticleDTO saveArticle(ArticleRequestDTO articleReArticleDTO, Users users) {
+        if((permissionRepository.getPermissionByUser(users) !=null && users.getRole().equals(Role.CUSTOMER_USER)
+                || users.getRole().equals(Role.SYS_ADMIN))) {
+            Articles articles = articleRequestMapper.toEntity(articleReArticleDTO);
+            articles.setCreatedBy(users);
+            return articleMapper.toDTO(articleRepository.save(articles));
         }
         throw new RuntimeException("User dont have permission to save");
     }
+
 
     @Override
     public void deleteArticles(Integer id) {

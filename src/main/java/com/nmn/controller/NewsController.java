@@ -1,6 +1,7 @@
 package com.nmn.controller;
 
 import com.nmn.dto.ArticleDTO;
+import com.nmn.dto.ArticleRequestDTO;
 import com.nmn.dto.CommentDTO;
 import com.nmn.model.Articles;
 import com.nmn.model.Comments;
@@ -48,7 +49,7 @@ public class NewsController {
     @Operation(summary = "Save article", description = "Save article")
     @SecurityRequirement(name = "Bearer Authentication")
     @PostMapping("/article/save")
-    ResponseEntity<ArticleDTO> saveArticle(@RequestBody ArticleDTO articleDTO, Principal userAuth) {
+    ResponseEntity<ArticleDTO> saveArticle(@RequestBody ArticleRequestDTO articleDTO, Principal userAuth) {
         Users user = userService.findUserByUserName(userAuth.getName());
         return new ResponseEntity<>(articleService.saveArticle(articleDTO, user), HttpStatus.OK);
     }
